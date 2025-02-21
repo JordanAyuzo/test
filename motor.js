@@ -33,13 +33,13 @@ function calculoMotor(tipoNomina, fechaPrimerEmpleo, genero) {
             D: [[0, 24, 5000], [25, 25, 4900], [26, 26, 4700], [27, 27, 5000], [28, Infinity, 4300]]
         }
     };
-    //Maximos y minimos
-    function obtenerMonto(montos) {
-        for (const [min, max, monto] of montos[genero][tipoNomina]) {
-            if (mesesDesdeEmpleo >= min && mesesDesdeEmpleo <= max) return monto;
-        }
-        return 0;
-    }
+// Máximos y mínimos
+function obtenerMonto(montos) {
+    const rango = montos[genero][tipoNomina].find(
+        ([min, max]) => mesesDesdeEmpleo >= min && mesesDesdeEmpleo <= max
+    );
+    return rango ? rango[2] : 0;
+}
     
     const montoMinimo = obtenerMonto(montosMinimos);
     const montoMaximo = obtenerMonto(montosMaximos);
@@ -56,17 +56,20 @@ function calculoMotor(tipoNomina, fechaPrimerEmpleo, genero) {
     };
 }
 
-// Pruebas
-/*
-const pruebas = [
-    { tipoNomina: 'A', fecha: '2022-06-12', genero: 'f' },
-    { tipoNomina: 'B', fecha: '1993-12-30', genero: 'f' },
-    { tipoNomina: 'C', fecha: '2020-09-19', genero: 'm' },
-    { tipoNomina: 'D', fecha: '2019-01-15', genero: 'm' }
-];
+function calcularCredito() {
+    const tipoNomina = document.getElementById("tipoNomina").value;
+    const fechaPrimerEmpleo = document.getElementById("fechaPrimerEmpleo").value;
+    const genero = document.getElementById("genero").value;
 
-pruebas.forEach(({ tipoNomina, fecha, genero }) => {
-    console.log(`Resultados para ${tipoNomina}, ${fecha}, ${genero}:`, 
-        calculoMotor(tipoNomina, fecha, genero));
-});
-/*/
+    if (!fechaPrimerEmpleo) {
+        alert("Por favor, ingrese la fecha de su primer empleo.");
+        return;
+    }
+
+    const resultado = calculoMotor(tipoNomina, fechaPrimerEmpleo, genero);
+    document.getElementById("resultado").innerHTML = `
+        <p>Monto Mínimo: ${resultado.montoMinimo}</p>
+        <p>Monto Máximo: ${resultado.montoMaximo}</p>
+        <p>Recomendación de Línea de Crédito: ${resultado.recomendacionLinea.toFixed(2)}</p>
+    `;
+}
